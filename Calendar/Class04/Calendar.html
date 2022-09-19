@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>ELFLEE의 Calendar</title>
+  </head>
+  <script>
+    var imgs = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg"]
+    var num = 0;
+    var leftchange = document.getElementById("left");
+    var rightchange = document.getElementById("right");
+    function changeimg(){
+      var nowimg = document.getElementById("img").src = imgs[num]
+      console.log(imgs[num])
+    }
+    function right(){
+      num += 1;
+      if(num > 4) num = 0;
+      changeimg();
+    }
+    function left(){
+      num -= 1;
+      if(num < 0) num = 4;
+      changeimg();
+    }
+    window.onload = function(){
+      changeimg();
+    }
+  </script>
+  <body>
+    <div class="">
+      <img id="img" src="" alt="">
+      <br>
+      <img id="left" onclick="left()" width="30" hieght="30" src="left.jpg" alt="">
+      <img id="right" onclick="right()" width="30" hieght="30" src="right.jpg" alt="">
+    </div>
+  </body>
+</html>
