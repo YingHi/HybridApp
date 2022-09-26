@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>김민제의 파멸적인 달력</title>
+  </head>
+  <style media="screen">
+    #divbody{
+      height:50px; background-color: blue;
+      height: 900px;
+      width: 1400px;
+    }
+  </style>
+  <body>
+    <div id="divbody">
+
+    </div>
+  </body>
+  <script>
+  var linelist = new Array(5);
+  var daynum = 1;
+    function clear(){ // 배열 초기화 함수
+      for(i=0;i<5;i++){
+        linelist[i] = new line(i+1);
+      }
+      daynum = 1;
+    }
+    function makeMonth(year, month){ // 연,월 받고 새 달력 만드는 함수
+      clear();
+      var isleap = false;
+      if(year%4 = 0){ // 윤년 판별 함수
+        isleap = true;
+      }
+    }
+    class line { // 달력 한 줄 클래스
+      constructor(num) { // 매개변수 : 몇번째 줄인지
+        this.linenum = num;
+        console.log(this.linenum)
+      }
+    }
+    class day{
+      constructor(num);
+    }
+    window.onload = function(){
+      clear();
+      console.log(linelist);
+    }
+  </script>
+</html>
