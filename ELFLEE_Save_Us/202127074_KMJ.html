@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>김민제의 파멸적인 달력</title>
+  </head>
+  <style media="screen">
+    #title{
+      text-align: center;
+      font-size: 20px;
+      height: 60px;
+      width: 900px;
+    }
+    .divh{
+      height: 20px;
+      width: 1000px;
+    }
+    .divhead{
+      height: 150px;
+      width: 1000px;
+    }
+    .h{
+    border : 1px solid black;
+      font-size: 20px;
+      padding: 5px;
+      height: 50px;
+      width: 100px;
+      float: left;
+      text-align: center;
+      position: relative;
+    }
+    .divbody{
+      height: 120px;
+      width: 1000px;
+    }
+    .day{
+    border : 1px solid black;
+      font-size: 20px;
+      padding: 5px;
+      height: 100px;
+      width: 100px;
+      float: left;
+      position: relative;
+    }
+
+    #goodDay{
+      color:red;
+    }
+
+    .line1{
+      left : 10px;
+      color: red;
+    }
+    .line2{
+      left : 20px;
+    }
+    .line3{
+      left : 30px;
+    }
+    .line4{
+      left : 40px;
+    }
+    .line5{
+      left : 50px;
+    }
+    .line6{
+      left : 60px;
+    }
+    .line7{
+      left : 70px;
+      color: blue;
+    }
+    img{
+      width: 50px;
+      height: 50px;
+    }
+    #right{
+      position: relative;
+      left: 700px;
+      top: 1px;
+    }
+    #C{
+      position: relative;
+      left: 600px;
+      top: 10px;
+    }
+  </style>
+  <script>
+    var standard = 0;
+    function chooseY(A){
+      nowYear = A.innerHTML
+      makeC();
+    }
+    function chooseM(A){
+      nowMonth = A.innerHTML
+      makeC();
+    }
+    function makeBtn(){
+        for(i = 0; i<10; i++){
+          yearBtn[i].innerHTML = standard+i+1;
+        }
+        CS.style.display = 'block';
+    }
+    function lleft(){
+      standard -= 10;
+      makeBtn();
+    }
+
+    function rright(){
+      standard += 10;
+      makeBtn();
+    }
+    
+  </script>
+  <body>
+    <div id="choose" class="pop_wrap" style="margin: 5px; display:none; background-color: gray;">
+      <div class="pop_inner">
+        <p class="dsc" style="color: white;">날짜를 선택하세요.</p>
+        <p style="color: white;">년 선택</p>
+        <button onclick="lleft()" class="leftBtn"><<</button>
+        <button onclick="chooseY(this)" class="yearBtn">1</button>
+        <button onclick="chooseY(this)" class="yearBtn">2</button>
+        <button onclick="chooseY(this)" class="yearBtn">3</button>
+        <button onclick="chooseY(this)" class="yearBtn">4</button>
+        <button onclick="chooseY(this)" class="yearBtn">5</button>
+        <button onclick="chooseY(this)" class="yearBtn">6</button>
+        <button onclick="chooseY(this)" class="yearBtn">7</button>
+        <button onclick="chooseY(this)" class="yearBtn">8</button>
+        <button onclick="chooseY(this)" class="yearBtn">9</button>
+        <button onclick="chooseY(this)" class="yearBtn">10</button>
+        <button onclick="rright()" class="rightBtn">>></button>
+        <p style="color: white;">월 선택</p>
+        <button onclick="chooseM(this)" class="monthBtn">1</button>
+        <button onclick="chooseM(this)" class="monthBtn">2</button>
+        <button onclick="chooseM(this)" class="monthBtn">3</button>
+        <button onclick="chooseM(this)" class="monthBtn">4</button>
+        <button onclick="chooseM(this)" class="monthBtn">5</button>
+        <button onclick="chooseM(this)" class="monthBtn">6</button>
+        <button onclick="chooseM(this)" class="monthBtn">7</button>
+        <button onclick="chooseM(this)" class="monthBtn">8</button>
+        <button onclick="chooseM(this)" class="monthBtn">9</button>
+        <button onclick="chooseM(this)" class="monthBtn">10</button>
+        <button onclick="chooseM(this)" class="monthBtn">11</button>
+        <button onclick="chooseM(this)" class="monthBtn">12</button>
+        <br>
+        <br>
+        <button type="button" id="close">닫기</button>
+      </div>
+    </div>
+    <div class = "divh" >
+      <img id="left" src="left.png" alt="">
+      <img id="C" src="callendar.png" alt="">
+      <img id="right" src="right.png" alt="">
+    </div>
+    <div class = "divhead">
+      <div id="title">
+        달력
+      </div>
+      <div class="h line1">일</div>
+      <div class="h line2">월</div>
+      <div class="h line3">화</div>
+      <div class="h line4">수</div>
+      <div class="h line5">목</div>
+      <div class="h line6">금</div>
+      <div class="h line7">토</div>
+    </div>
+
+    <div class="divbody lineOne">
+      <div class="day first line1"></div>
+      <div class="day first line2"></div>
+      <div class="day first line3"></div>
+      <div class="day first line4"></div>
+      <div class="day first line5"></div>
+      <div class="day first line6"></div>
+      <div class="day first line7"></div>
+    </div>
+    <div class="divbody lineTwo">
+      <div class="day second line1"></div>
+      <div class="day second line2"></div>
+      <div class="day second line3"></div>
+      <div class="day second line4"></div>
+      <div class="day second line5"></div>
+      <div class="day second line6"></div>
+      <div class="day second line7"></div>
+    </div>
+    <div class="divbody lineThree">
+      <div class="day third line1"></div>
+      <div class="day third line2"></div>
+      <div class="day third line3"></div>
+      <div class="day third line4"></div>
+      <div class="day third line5"></div>
+      <div class="day third line6"></div>
+      <div class="day third line7"></div>
+    </div>
+    <div class="divbody lineFour">
+      <div class="day fourth line1"></div>
+      <div class="day fourth line2"></div>
+      <div class="day fourth line3"></div>
+      <div class="day fourth line4"></div>
+      <div class="day fourth line5"></div>
+      <div class="day fourth line6"></div>
+      <div class="day fourth line7"></div>
+    </div>
+    <div class="divbody lineFive">
+      <div class="day fifth line1"></div>
+      <div class="day fifth line2"></div>
+      <div class="day fifth line3"></div>
+      <div class="day fifth line4"></div>
+      <div class="day fifth line5"></div>
+      <div class="day fifth line6"></div>
+      <div class="day fifth line7"></div>
+    </div>
+    <div class="divbody lineSix">
+      <div class="day sixth line1"></div>
+      <div class="day sixth line2"></div>
+      <div class="day sixth line3"></div>
+      <div class="day sixth line4"></div>
+      <div class="day sixth line5"></div>
+      <div class="day sixth line6"></div>
+      <div class="day sixth line7"></div>
+    </div>
+
+  </body>
+  <script>
+  var nowYear = 2022;
+  var nowMonth = 10;
+  var maxDay = 31;
+  var startPoint = 6;
+  var firstLine = document.getElementsByClassName("first");
+  var secondLine = document.getElementsByClassName("second");
+  var thirdLine = document.getElementsByClassName("third");
+  var fourthLine = document.getElementsByClassName("fourth");
+  var fifthLine = document.getElementsByClassName("fifth");
+  var sixthLine = document.getElementsByClassName("sixth");
+  var title = document.getElementById("title");
+  var leftB = document.getElementById("left");
+  var rightB = document.getElementById("right");
+  var CD = document.getElementById("C");
+  var CS = document.getElementById("choose");
+  var CL = document.getElementById("close");
+  var yearBtn = document.getElementsByClassName("yearBtn");
+  var monthBtn = document.getElementsByClassName("monthBtn");
+  var LB = document.getElementById("leftBtn");
+  var RB = document.getElementById("rightBtn");
+
+  function left(){
+    nowMonth--;
+    if(nowMonth < 1){
+      nowMonth = 12;
+      nowYear--;
+    }
+      makeC();
+  }
+  leftB.addEventListener("click",left);
+
+  function right(){
+    nowMonth++;
+    if(nowMonth > 12){
+      nowMonth = 1;
+      nowYear++;
+    }
+      makeC();
+  }
+  rightB.addEventListener("click",right);
+
+  C.addEventListener('click', function(){
+    standard = Math.floor(nowYear/10) * 10
+    makeBtn();
+  });
+  
+  CL.addEventListener('click', function(){
+    CS.style.display = 'none';
+  });
+
+  function clear(){
+    for(var i = 0; i<7;i++){
+      firstLine[i].id = "";
+      secondLine[i].id = "";
+      thirdLine[i].id = "";
+      fourthLine[i].id = "";
+      fifthLine[i].id = "";
+      sixthLine[i].id = "";
+      firstLine[i].innerHTML = "";
+      secondLine[i].innerHTML = "";
+      thirdLine[i].innerHTML = "";
+      fourthLine[i].innerHTML = "";
+      fifthLine[i].innerHTML = "";
+      sixthLine[i].innerHTML = "";
+    }
+  }
+
+  function goodD(){
+    if(nowMonth == 1){
+      for(var i=0; i<7;i++){
+        if(firstLine[i].innerHTML == 1){
+          firstLine[i].innerHTML = firstLine[i].innerHTML+"\n신정";
+          firstLine[i].id = "goodDay";
+        }
+      }
+    }
+    if(nowMonth == 3){
+      for(var i=0; i<7;i++){
+        if(firstLine[i].innerHTML == 1){
+          firstLine[i].innerHTML = firstLine[i].innerHTML+"\n삼일절";
+          firstLine[i].id = "goodDay";
+        }
+      }
+    }
+    if(nowMonth == 5){
+      for(var i=0; i<7;i++){
+        if(firstLine[i].innerHTML == 5){
+          firstLine[i].innerHTML = firstLine[i].innerHTML+"\n어린이날";
+          firstLine[i].id = "goodDay";
+        }
+        if(secondLine[i].innerHTML == 5){
+          secondLine[i].innerHTML = secondLine[i].innerHTML+"\n어린이날";
+          secondLine[i].id = "goodDay";
+        }
+      }
+    }
+    if(nowMonth == 6){
+      for(var i=0; i<7;i++){
+        if(firstLine[i].innerHTML == 6){
+          firstLine[i].innerHTML = firstLine[i].innerHTML+"\현충일";
+          firstLine[i].id = "goodDay";
+        }
+        if(secondLine[i].innerHTML == 6){
+          secondLine[i].innerHTML = secondLine[i].innerHTML+"\n현충일";
+          secondLine[i].id = "goodDay";
+        }
+      }
+    }
+    if(nowMonth == 8){
+      for(var i=0; i<7;i++){
+        if(thirdLine[i].innerHTML == 15){
+          thirdLine[i].innerHTML = thirdLine[i].innerHTML+"\n광복절";
+          thirdLine[i].id = "goodDay";
+        }
+      }
+    }
+    if(nowMonth == 10){
+      for(var i=0; i<7;i++){
+        if(firstLine[i].innerHTML == 3){
+          firstLine[i].innerHTML = firstLine[i].innerHTML+"\n개천절";
+          firstLine[i].id = "goodDay";
+        }
+        if(secondLine[i].innerHTML == 3){
+          secondLine[i].innerHTML = secondLine[i].innerHTML+"\n개천절";
+          secondLine[i].id = "goodDay";
+        }
+      }
+      for(var i=0; i<7;i++){
+        if(thirdLine[i].innerHTML == 9){
+          thirdLine[i].innerHTML = thirdLine[i].innerHTML+"\n한글날";
+          thirdLine[i].id = "goodDay";
+        }
+        if(secondLine[i].innerHTML == 9){
+          secondLine[i].innerHTML = secondLine[i].innerHTML+"\n한글날";
+          secondLine[i].id = "goodDay";
+        }
+      }
+    }
+    if(nowMonth == 12){
+      for(var i=0; i<7;i++){
+        if(fourthLine[i].innerHTML == 25){
+          fourthLine[i].innerHTML = fourthLine[i].innerHTML+"\n성탄절";
+          fourthLine[i].id = "goodDay";
+        }
+        if(fifthLine[i].innerHTML == 25){
+          fifthLine[i].innerHTML = fifthLine[i].innerHTML+"\n성탄절";
+          fifthLine[i].id = "goodDay";
+        }
+      }
+    }
+  }
+
+  function makeC(){
+    var a = new Date(nowYear,nowMonth-1);
+    startPoint = a.getDay();
+    clear();
+    switch(nowMonth){
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+          maxDay = 31;
+          break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+          maxDay = 30;
+          break;
+        case 2:
+          maxDay = 28;
+          if(nowMonth%4 == 0){
+            if(nowMonth%100 == 0 && nowMonth%400 != 0) break;
+            maxDay = 29;
+            break;
+          }
+      }
+      var lineNum = 0;
+      var dayNum = 1;
+      while(dayNum <= maxDay){
+        for(var j = 0; j<7; j++){
+          if(dayNum > maxDay) break;
+          switch(lineNum){
+            case 0:
+              if(j == 0) j = startPoint;
+              firstLine[j].innerHTML = dayNum;
+              break;
+            case 1:
+              secondLine[j].innerHTML = dayNum;
+              break;
+            case 2:
+              thirdLine[j].innerHTML = dayNum;
+              break;
+            case 3:
+              fourthLine[j].innerHTML = dayNum;
+              break;
+            case 4:
+              fifthLine[j].innerHTML = dayNum;
+              break;
+            case 5:
+              sixthLine[j].innerHTML = dayNum;
+              break;
+          }
+          dayNum++;
+        }
+        lineNum++;
+      }
+      title.innerHTML = nowYear+"년 "+nowMonth+"월 달력";
+      goodD();
+  }
+
+  window.onload = function(){
+    makeC();
+  }
+
+  </script>
+</html>
