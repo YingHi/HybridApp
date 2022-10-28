@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style media="screen">
+      #cv{
+        background-color: skyblue;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+    class ButtonMaker {
+      constructor(width,height,name) {
+        this.Name = name;
+        this.cv = document.createElement("canvas");
+        document.body.append(this.cv);
+        this.cv.setAttribute('Id', name);
+        this.cv.setAttribute('width', width);
+        this.cv.setAttribute('height', height);
+        this.ctx = this.cv.getContext("2d");
+        this.isclick = false;
+      }
+      MakeButton(x,y,width,height,bm){
+        this.ctx.beginPath();
+        this.ctx.moveTo(x,y);
+        this.ctx.lineTo(x,y+height);
+        this.ctx.lineTo(x+width,y+height);
+        this.ctx.lineTo(x+width,y);
+        this.ctx.lineTo(x,y);
+        this.ctx.stroke();
+        this.ctx.fillStyle = "orange";
+        this.ctx.fill();
+        this.cv.onmousedown = function(event){
+          const Cx = event.clientX - cv.offsetLeft; 
+          const Cy = event.clientY - cv.offsetTop;
+          if(Cx >= x && Cx <= x+width && Cy >= y && Cy <= y+height){
+            bm.ctx.fillStyle = "black";
+            bm.ctx.fill();
+          }
+          bm.isclick = true;
+        }
+        this.cv.onmouseup = function(event){
+          const Cx = event.clientX - bm.cv.offsetLeft; 
+          const Cy = event.clientY - bm.cv.offsetTop;
+          if(Cx >= x && Cx <= x+width && Cy >= y && Cy <= y+height){
+            bm.ctx.fillStyle = "orange";
+            bm.ctx.fill();
+          }else{
+            bm.ctx.fillStyle = "red";
+            bm.ctx.fill();
+          }
+          bm.isclick = false;
+          }
+        this.cv.onmousemove = function(event){
+          const Cx = event.clientX - bm.cv.offsetLeft; 
+          const Cy = event.clientY - bm.cv.offsetTop;
+          console.log(Cx);
+          console.log(Cy);
+          if(Cx >= x && Cx <= x+width && Cy >= y && Cy <= y+height){
+            if(bm.isclick != true){
+              bm.ctx.fillStyle = "orange";
+              bm.ctx.fill();
+            }
+          }else{
+            if(bm.isclick != true){
+              bm.ctx.fillStyle = "red";
+              bm.ctx.fill();
+            }
+          }
+        }
+      }
+    }
+    var Btn1 = new ButtonMaker(500,500,"cv");
+    Btn1.MakeButton(200,200,100,100,Btn1);
+
+    </script>
+  </body>
+</html>
