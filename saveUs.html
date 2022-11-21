@@ -1,0 +1,107 @@
+
+<!-- https://v3-docs.vuejs-korea.org/  -->
+<html lang="ko" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>정말 귀찮아!</title>
+    <style media="screen">
+    .block{
+      text-align: center;
+      font-size: 30px;
+      color: white;
+    }
+    #game{
+      height: 500px;
+      width: 500px;
+      background-color: black;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr 1fr;
+      grid-gap: 10px;
+      padding: 10px;
+    }
+    #no{
+      background-color: red;
+    }
+    #yes{
+      background-color: blue;
+    }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@3"></script>
+    <div id="game">
+      <div v-for="index in count" class = "block" id="no"></div>
+    </div>
+     <script>
+     const { createApp } = Vue;
+      createApp({
+        data() {
+          return {
+            count : 16,
+          }
+        }
+      }).mount('#game')
+      var Blocks = document.getElementsByClassName("block")
+      function makeRandomN(){
+        while(true){
+          var N = parseInt(Math.random() * 16);
+          if(Blocks[N].id == "no"){ // 숫자가 없으면 숫자 소환
+            Blocks[N].innerHTML = 2;
+            Blocks[N].setAttribute("id","yes")
+            break;
+          }
+        }
+      }
+      function MoveLeft(){
+        for(var i = 1; i < 4; i++){ // 타겟 설정
+          if(Blocks[i].id == "yes"){ // 타겟이 있다면
+            for(var j = 0; j < i-1; j++){ // 타겟의 이전 블록에 하나씩
+              console.log("good");
+              if(Blocks[j].id == "yes"){ // 숫자가 있는 라인을 만나면
+                if(Blocks[j].innerHTML == Blocks[i].innerHTML){ // 두 값이 같으면
+                  Blocks[j].innerHTML *= 2;
+                  Blocks[j].setAttribute('id', 'yes');
+                  Blocks[i].setAttribute('id', 'no');
+                  Blocks[i].innerHTML = "";
+                }else{ // 두 값이 다르면
+                  var int = Blocks[i].innerHTML;
+                  Blocks[j+1].innerHTML = int;
+                  Blocks[i].setAttribute('id', 'no');
+                  Blocks[j+1].setAttribute('id', 'yes');
+                  Blocks[i].innerHTML = "";
+                }
+                
+              }
+            }
+          }
+        }
+      }
+      function MoveRight(){
+      }
+      function MoveUp(){
+      }
+      function MoveDown(){
+      }
+      document.addEventListener("keydown", HowHow, false);
+      function HowHow(event){
+        switch(event.keyCode) {
+      		case 37:
+          MoveLeft();
+      			console.log("left Pressed")
+      			break;
+      		case 38:
+      			console.log("up Pressed")
+      			break;
+      		case 39:
+      			console.log("right Pressed")
+      			break;
+      		case 40:
+      			console.log("down Pressed")
+      			break;
+      	}
+      }
+      window.onload = makeRandomN();
+     </script>
+  </body>
+</html>
