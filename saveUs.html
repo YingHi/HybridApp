@@ -1,4 +1,3 @@
-
 <!-- https://v3-docs.vuejs-korea.org/  -->
 <html lang="ko" dir="ltr">
   <head>
@@ -21,7 +20,7 @@
       padding: 10px;
     }
     #no{
-      background-color: red;
+      background-color: pink;
     }
     #yes{
       background-color: blue;
@@ -42,66 +41,175 @@
           }
         }
       }).mount('#game')
+      var Counts = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]] // 숫자 배열
       var Blocks = document.getElementsByClassName("block")
-      function makeRandomN(){
+      function Update(){
+        console.log(Counts[0])
+        console.log(Counts[1])
+        console.log(Counts[2])
+        console.log(Counts[3])
+        for(var i = 0; i < 4; i++){
+          for(var j = 0; j < 4; j++){
+            var a = i * 4;
+            var b = a + j;
+            if(Counts[i][j] != 0){
+              Blocks[b].innerHTML = Counts[i][j]; // 배열의 값을 블록에 넣음
+              Blocks[b].id = "yes";
+            }else{
+              Blocks[b].innerHTML = ""; // 배열의 값을 블록에 넣음
+              Blocks[b].id = "no";
+            }
+          }
+        }
+      }
+      function MakeRandomN(){
         while(true){
-          var N = parseInt(Math.random() * 16);
-          if(Blocks[N].id == "no"){ // 숫자가 없으면 숫자 소환
-            Blocks[N].innerHTML = 2;
-            Blocks[N].setAttribute("id","yes")
+          var X = parseInt(Math.random() * 4);
+          var Y = parseInt(Math.random() * 4);
+          if(Counts[X][Y] == 0){
+            Counts[X][Y] = 2;
             break;
           }
         }
       }
       function MoveLeft(){
-        for(var i = 1; i < 4; i++){ // 타겟 설정
-          if(Blocks[i].id == "yes"){ // 타겟이 있다면
-            for(var j = 0; j < i-1; j++){ // 타겟의 이전 블록에 하나씩
-              console.log("good");
-              if(Blocks[j].id == "yes"){ // 숫자가 있는 라인을 만나면
-                if(Blocks[j].innerHTML == Blocks[i].innerHTML){ // 두 값이 같으면
-                  Blocks[j].innerHTML *= 2;
-                  Blocks[j].setAttribute('id', 'yes');
-                  Blocks[i].setAttribute('id', 'no');
-                  Blocks[i].innerHTML = "";
-                }else{ // 두 값이 다르면
-                  var int = Blocks[i].innerHTML;
-                  Blocks[j+1].innerHTML = int;
-                  Blocks[i].setAttribute('id', 'no');
-                  Blocks[j+1].setAttribute('id', 'yes');
-                  Blocks[i].innerHTML = "";
+        var is_moved = false; // 움직였는지 여부
+        for(var i = 0; i < 4; i++){
+          for(var j = 0; j < 4; j++){
+            if(Counts[i][j] != 0){
+              var val = Counts[i][j]
+              for(var k = j -1; k >=0; k--){
+                if(Counts[i][k] != 0){ // 옆칸에 값이 있다면
+                  if(Counts[i][k] == Counts[i][k+1]){ // 옆칸의 값이 대상 값과 같다면
+                    Counts[i][k] *= 2;
+                    Counts[i][k+1] = 0;
+                    is_moved = true;
+                    break;
+                  }else{ // 옆칸의 값이 대상 값과 다르다면
+                    break; // 반복문 break;
+                  }
+                }else{ // 옆 칸에 값이 없다면
+                  Counts[i][k] = Counts[i][k+1];
+                  Counts[i][k+1] = 0;
+                  is_moved = true;
                 }
-                
               }
             }
           }
         }
+        if(is_moved) MakeRandomN();
       }
+
       function MoveRight(){
+        var is_moved = false; // 움직였는지 여부
+        for(var i = 0; i < 4; i++){
+          for(var j = 3; j >= 0; j--){
+            if(Counts[i][j] != 0){
+              var val = Counts[i][j]
+              for(var k = j +1; k < 4; k++){
+                if(Counts[i][k] != 0){ // 옆칸에 값이 있다면
+                  if(Counts[i][k] == Counts[i][k-1]){ // 옆칸의 값이 대상 값과 같다면
+                    Counts[i][k] *= 2;
+                    Counts[i][k-1] = 0;
+                    is_moved = true;
+                    break;
+                  }else{ // 옆칸의 값이 대상 값과 다르다면
+                    break; // 반복문 break;
+                  }
+                }else{ // 옆 칸에 값이 없다면
+                  Counts[i][k] = Counts[i][k-1];
+                  Counts[i][k-1] = 0;
+                  is_moved = true;
+                }
+              }
+            }
+          }
+        }
+        if(is_moved) MakeRandomN();
       }
       function MoveUp(){
+        var is_moved = false; // 움직였는지 여부
+        for(var j = 0; j < 4; j++){
+          for(var i = 0; i < 4; i++){
+            if(Counts[i][j] != 0){
+              var val = Counts[i][j]
+              for(var k = i -1; k >=0; k--){
+                if(Counts[k][j] != 0){ // 옆칸에 값이 있다면
+                  if(Counts[k][j] == Counts[k+1][j]){ // 옆칸의 값이 대상 값과 같다면
+                    Counts[k][j] *= 2;
+                    Counts[k+1][j] = 0;
+                    is_moved = true;
+                    break;
+                  }else{ // 옆칸의 값이 대상 값과 다르다면
+                    break; // 반복문 break;
+                  }
+                }else{ // 옆 칸에 값이 없다면
+                  Counts[k][j] = Counts[k+1][j];
+                  Counts[k+1][j] = 0;
+                  is_moved = true;
+                }
+              }
+            }
+          }
+        }
+        if(is_moved) MakeRandomN();
       }
       function MoveDown(){
+        var is_moved = false; // 움직였는지 여부
+        for(var j = 0; j < 4; j++){
+          for(var i = 3; i >= 0; i--){
+            if(Counts[i][j] != 0){
+              var val = Counts[i][j]
+              for(var k = i +1; k < 4; k++){
+                if(Counts[k][j] != 0){ // 옆칸에 값이 있다면
+                  if(Counts[k][j] == Counts[k-1][j]){ // 옆칸의 값이 대상 값과 같다면
+                    Counts[k][j] *= 2;
+                    Counts[k-1][j] = 0;
+                    is_moved = true;
+                    break;
+                  }else{ // 옆칸의 값이 대상 값과 다르다면
+                    break; // 반복문 break;
+                  }
+                }else{ // 옆 칸에 값이 없다면
+                  Counts[k][j] = Counts[k-1][j];
+                  Counts[k-1][j] = 0;
+                  is_moved = true;
+                }
+              }
+            }
+          }
+        }
+        if(is_moved) MakeRandomN();
       }
-      document.addEventListener("keydown", HowHow, false);
-      function HowHow(event){
+      document.addEventListener("keydown", DK, false);
+      function DK(event){
         switch(event.keyCode) {
       		case 37:
           MoveLeft();
-      			console.log("left Pressed")
-      			break;
+          Update();
+    			console.log("left Pressed")
+    			break;
       		case 38:
-      			console.log("up Pressed")
-      			break;
+          MoveUp();
+          Update();
+    			console.log("up Pressed")
+    			break;
       		case 39:
-      			console.log("right Pressed")
-      			break;
+          MoveRight();
+          Update();
+    			console.log("right Pressed")
+    			break;
       		case 40:
+          MoveDown();
+          Update();
       			console.log("down Pressed")
       			break;
       	}
       }
-      window.onload = makeRandomN();
+      window.onload = function(){
+        MakeRandomN();
+        Update();
+      }
      </script>
   </body>
 </html>
