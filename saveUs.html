@@ -22,8 +22,38 @@
     #no{
       background-color: pink;
     }
-    #yes{
-      background-color: blue;
+    #count2{
+      background-color: #666666;
+    }
+    #count4{
+      background-color: #666688;
+    }
+    #count8{
+      background-color: #886688;
+    }
+    #count16{
+      background-color: #888888;
+    }
+    #count32{
+      background-color: #8888AA;
+    }
+    #count64{
+      background-color: #AA88AA;
+    }
+    #count128{
+      background-color: #AAAAAA;
+    }
+    #count256{
+      background-color: #AAAABB;
+    }
+    #count512{
+      background-color: #BBAABB;
+    }
+    #count1024{
+      background-color: #BBAABB;
+    }
+    #count2048{
+      background-color: #BBBBBB;
     }
     </style>
   </head>
@@ -42,46 +72,54 @@
         }
       }).mount('#game')
       var Counts = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]] // 숫자 배열
+      var Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]] // 이동여부 배열
       var Blocks = document.getElementsByClassName("block")
+      function Reset(){
+        Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+      }
       function Update(){
-        console.log(Counts[0])
-        console.log(Counts[1])
-        console.log(Counts[2])
-        console.log(Counts[3])
         for(var i = 0; i < 4; i++){
           for(var j = 0; j < 4; j++){
             var a = i * 4;
             var b = a + j;
             if(Counts[i][j] != 0){
               Blocks[b].innerHTML = Counts[i][j]; // 배열의 값을 블록에 넣음
-              Blocks[b].id = "yes";
+              Blocks[b].id = "count" + Counts[i][j];
             }else{
               Blocks[b].innerHTML = ""; // 배열의 값을 블록에 넣음
               Blocks[b].id = "no";
             }
           }
         }
+        Reset();
       }
       function MakeRandomN(){
         while(true){
           var X = parseInt(Math.random() * 4);
           var Y = parseInt(Math.random() * 4);
           if(Counts[X][Y] == 0){
-            Counts[X][Y] = 2;
-            break;
+            var Z = parseInt(Math.random() * 10);
+            if(Z > 7){
+              Counts[X][Y] = 4;
+              break;
+            }else{
+              Counts[X][Y] = 2;
+              break;
+            }
           }
         }
       }
       function MoveLeft(){
-        var is_moved = false; // 움직였는지 여부
+        var is_moved = false; // 움직였는지 여부ㅓ
         for(var i = 0; i < 4; i++){
           for(var j = 0; j < 4; j++){
-            if(Counts[i][j] != 0){
-              var val = Counts[i][j]
-              for(var k = j -1; k >=0; k--){
+            if(Counts[i][j] != 0){ // 지금 선택된 칸이 0이 아니라면(값이 있다면)
+              var val = Counts[i][j] // val에대가 현재 선택된 칸의 값을 저장
+              for(var k = j -1; k >=0; k--){ // 왼쪽으로 이동, 만약에 같은 값이 있다면 합치기
                 if(Counts[i][k] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[i][k] == Counts[i][k+1]){ // 옆칸의 값이 대상 값과 같다면
+                  if(Counts[i][k] == Counts[i][k+1] && Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Counts[i][k] *= 2;
+                    Check[i][k] = 1;
                     Counts[i][k+1] = 0;
                     is_moved = true;
                     break;
@@ -89,9 +127,11 @@
                     break; // 반복문 break;
                   }
                 }else{ // 옆 칸에 값이 없다면
-                  Counts[i][k] = Counts[i][k+1];
-                  Counts[i][k+1] = 0;
-                  is_moved = true;
+                  if(k < 4){
+                    Counts[i][k] = Counts[i][k+1];
+                    Counts[i][k+1] = 0;
+                    is_moved = true;
+                  }
                 }
               }
             }
@@ -108,8 +148,9 @@
               var val = Counts[i][j]
               for(var k = j +1; k < 4; k++){
                 if(Counts[i][k] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[i][k] == Counts[i][k-1]){ // 옆칸의 값이 대상 값과 같다면
+                  if(Counts[i][k] == Counts[i][k-1] && Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Counts[i][k] *= 2;
+                    Check[i][k] = 1;
                     Counts[i][k-1] = 0;
                     is_moved = true;
                     break;
@@ -117,9 +158,11 @@
                     break; // 반복문 break;
                   }
                 }else{ // 옆 칸에 값이 없다면
-                  Counts[i][k] = Counts[i][k-1];
-                  Counts[i][k-1] = 0;
-                  is_moved = true;
+                  if(k >= 0){
+                    Counts[i][k] = Counts[i][k-1];
+                    Counts[i][k-1] = 0;
+                    is_moved = true;
+                  }
                 }
               }
             }
@@ -135,8 +178,9 @@
               var val = Counts[i][j]
               for(var k = i -1; k >=0; k--){
                 if(Counts[k][j] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[k][j] == Counts[k+1][j]){ // 옆칸의 값이 대상 값과 같다면
+                  if(Counts[k][j] == Counts[k+1][j] && Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Counts[k][j] *= 2;
+                    Check[k][j] = 1;
                     Counts[k+1][j] = 0;
                     is_moved = true;
                     break;
@@ -144,9 +188,11 @@
                     break; // 반복문 break;
                   }
                 }else{ // 옆 칸에 값이 없다면
-                  Counts[k][j] = Counts[k+1][j];
-                  Counts[k+1][j] = 0;
-                  is_moved = true;
+                  if(k >= 0){
+                    Counts[k][j] = Counts[k+1][j];
+                    Counts[k+1][j] = 0;
+                    is_moved = true;
+                  }
                 }
               }
             }
@@ -162,8 +208,9 @@
               var val = Counts[i][j]
               for(var k = i +1; k < 4; k++){
                 if(Counts[k][j] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[k][j] == Counts[k-1][j]){ // 옆칸의 값이 대상 값과 같다면
+                  if(Counts[k][j] == Counts[k-1][j] && Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Counts[k][j] *= 2;
+                    Check[k][j] = 1;
                     Counts[k-1][j] = 0;
                     is_moved = true;
                     break;
@@ -171,9 +218,11 @@
                     break; // 반복문 break;
                   }
                 }else{ // 옆 칸에 값이 없다면
-                  Counts[k][j] = Counts[k-1][j];
-                  Counts[k-1][j] = 0;
-                  is_moved = true;
+                  if(k < 4){
+                    Counts[k][j] = Counts[k-1][j];
+                    Counts[k-1][j] = 0;
+                    is_moved = true;
+                  }
                 }
               }
             }
@@ -207,6 +256,7 @@
       	}
       }
       window.onload = function(){
+        MakeRandomN();
         MakeRandomN();
         Update();
       }
