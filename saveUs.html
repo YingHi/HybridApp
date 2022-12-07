@@ -8,6 +8,7 @@
       text-align: center;
       font-size: 30px;
       color: white;
+      display: absolute;
     }
     #ReadyBoard{
       display: none;
@@ -30,6 +31,18 @@
       grid-template-rows: 1fr 1fr 1fr 1fr;
       grid-gap: 10px;
       padding: 10px;
+    }
+    #ab{
+      text-align: center;
+      font-size: 30px;
+      color: black;
+      position: absolute;
+      top: 250px;
+      left: 150px;
+
+      height: 120px;
+      width: 120px;
+      background-color: gray;
     }
     #no{
       background-color: #DDDDDD;
@@ -100,6 +113,7 @@
     <div id="ReadyBoard">
       <div id="game">
         <div v-for="index in count" class = "block" id="no"></div>
+        //<div id = "ab">안녕</div>
       </div>
       <h1 id = "text">MoveCount : 0</h1>
     </div>
@@ -112,21 +126,6 @@
           }
         }
       }).mount('#game')
-      class Block {
-        constructor(x,y,i) {
-          this.v = 0;
-          this.x = x;
-          this.y = y;
-          this.MoveTox = x;
-          this.MoveToy = y;
-          this.index = i;
-          this.newValue = 0;
-        }
-        Move(x,y){
-          this.MoveTox = x;
-          this.MoveToy = y;
-        }
-      }
       class GameManager{
         constructor() { //생성자
           this.Blocks = document.getElementsByClassName("block")
@@ -138,42 +137,29 @@
           this.ClearText = document.getElementById("ClearText")
           this.Score;
           this.gameState;
-          this.Counts = new Array(4);
-          this.ReturnNum = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+          this.Move = [[[0,0],[0,1],[0,2],[0,3]],[[1,0],[1,1],[1,2],[1,3]],[[2,0],[2,1],[2,2],[2,3]],[[3,0],[3,1],[3,2],[3,3]]]
           this.Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
-          for (var i = 0; i < this.Counts.length; i++) {
-              this.Counts[i] = new Array();
-              }
-          for(var i = 0; i<4; i++){
-            for(var j = 0; j<4; j++){
-              this.Counts[i].push(new Block(i,j));
-            }
-          }
+          this.Counts = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
         }
       }
       var Gm
+      function animate(){
 
-      function Reset(){
-        Gm.Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
       }
-
       function Mul2(a,b){
-        Gm.Counts[a][b].v *= 2;
+        Gm.Counts[a][b] *= 2;
         Gm.Check[a][b] = 1;
-        if(Gm.Counts[a][b].v == 2048){
+        if(Gm.Counts[a][b] == 2048){
           Clear();
         }
       }
-      function Remove(a,b){
-        Gm.Counts[a][b].v = 0;
-      }
       function Change(a,b,c,d){
         if(d == "L" || d == "R"){
-          Gm.Counts[a][b].v = Gm.Counts[a][c].v;
-          Gm.Counts[a][c].v = 0;
+          Gm.Counts[a][b] = Gm.Counts[a][c];
+          Gm.Counts[a][c] = 0;
         }else if(d == "U" || d == "D"){
-          Gm.Counts[a][b].v = Gm.Counts[c][b].v;
-          Gm.Counts[c][b].v = 0;
+          Gm.Counts[a][b] = Gm.Counts[c][b];
+          Gm.Counts[c][b] = 0;
         }
       }
       function Update(){
@@ -181,35 +167,36 @@
           for(var j = 0; j < 4; j++){
             var a = i * 4;
             var b = a + j;
-            if(Gm.Counts[i][j].v != 0){
-              Gm.Blocks[b].innerHTML = Gm.Counts[i][j].v; // 배열의 값을 블록에 넣음
-              Gm.Blocks[b].id = "count" + Gm.Counts[i][j].v;
+            if(Gm.Counts[i][j] != 0){
+              Gm.Blocks[b].innerHTML = Gm.Counts[i][j]; // 배열의 값을 블록에 넣음
+              Gm.Blocks[b].id = "count" + Gm.Counts[i][j];
             }else{
               Gm.Blocks[b].innerHTML = ""; // 배열의 값을 블록에 넣음
               Gm.Blocks[b].id = "no";
             }
           }
         }
-        var is_End = 0;
+        var is_End = 0; // 게임 종료 판별
         for(var i = 0; i < 4; i++){
           for(var j = 0; j < 4; j++){
             var Can_Move = 4;
             if(i == 0) Can_Move-=1; // 맨 왼쪽이면 이동불가
-            else if(Gm.Counts[i-1][j].v != 0 && Gm.Counts[i-1][j].v != Gm.Counts[i][j].v) Can_Move-=1 // 왼쪽이동가능여부 확인
+            else if(Gm.Counts[i-1][j] != 0 && Gm.Counts[i-1][j] != Gm.Counts[i][j]) Can_Move-=1 // 왼쪽이동가능여부 확인
             if(i == 3) Can_Move-=1; // 맨 오른쪽이면 이동불가
-            else if(Gm.Counts[i+1][j].v != 0 && Gm.Counts[i+1][j].v != Gm.Counts[i][j].v) Can_Move-=1 // 오른쪽이동가능여부 확인
+            else if(Gm.Counts[i+1][j] != 0 && Gm.Counts[i+1][j] != Gm.Counts[i][j]) Can_Move-=1 // 오른쪽이동가능여부 확인
             if(j == 0) Can_Move-=1; // 맨 위쪽이면 이동불가
-            else if(Gm.Counts[i][j-1].v != 0 && Gm.Counts[i][j-1].v != Gm.Counts[i][j].v) Can_Move-=1 // 위쪽이동가능여부 확인
+            else if(Gm.Counts[i][j-1] != 0 && Gm.Counts[i][j-1] != Gm.Counts[i][j]) Can_Move-=1 // 위쪽이동가능여부 확인
             if(j == 3) Can_Move-=1; // 맨 아래쪽이면 이동불가
-            else if(Gm.Counts[i][j+1].v != 0 && Gm.Counts[i][j+1].v != Gm.Counts[i][j].v) Can_Move-=1 // 아래쪽이동가능여부 확인
+            else if(Gm.Counts[i][j+1] != 0 && Gm.Counts[i][j+1] != Gm.Counts[i][j]) Can_Move-=1 // 아래쪽이동가능여부 확인
             if(Can_Move == 0) is_End += 1;
             }
           }
         if(is_End == 16){
           End();
         }
-        Reset();
-        Gm.innerHTML = "MoveCount : " + Gm.Score;
+        Gm.Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]] // 초기화
+        this.Move = [[[0,0],[0,1],[0,2],[0,3]],[[1,0],[1,1],[1,2],[1,3]],[[2,0],[2,1],[2,2],[2,3]],[[3,0],[3,1],[3,2],[3,3]]]
+        Gm.innerHTML = "MoveCount : " + Gm.Score; // 점수 업데이트
       }
       function StartMakeRandomN(){
         var A = parseInt(Math.random() * 100);
@@ -217,12 +204,12 @@
           while(true){
             var X = parseInt(Math.random() * 4);
             var Y = parseInt(Math.random() * 4);
-            if(Gm.Counts[X][Y].v == 0){
+            if(Gm.Counts[X][Y] == 0){
               if(A > 66){
-                Gm.Counts[X][Y].v = 4;
+                Gm.Counts[X][Y] = 4;
                 break;
               }else{
-                Gm.Counts[X][Y].v = 2;
+                Gm.Counts[X][Y] = 2;
                 break;
               }
             }
@@ -232,12 +219,12 @@
             while(true){
               var X = parseInt(Math.random() * 4);
               var Y = parseInt(Math.random() * 4);
-              if(Gm.Counts[X][Y].v == 0){
+              if(Gm.Counts[X][Y] == 0){
                 if(i == 0){
-                  Gm.Counts[X][Y].v = 2;
+                  Gm.Counts[X][Y] = 2;
                   break;
                 }else{
-                  Gm.Counts[X][Y].v = 4;
+                  Gm.Counts[X][Y] = 4;
                   break;
                 }
               }
@@ -250,13 +237,13 @@
           while(true){
             var X = parseInt(Math.random() * 4);
             var Y = parseInt(Math.random() * 4);
-            if(Gm.Counts[X][Y].v == 0){
+            if(Gm.Counts[X][Y] == 0){
               var Z = parseInt(Math.random() * 10);
               if(Z > 7){
-                Gm.Counts[X][Y].v = 4;
+                Gm.Counts[X][Y] = 4;
                 break;
               }else{
-                Gm.Counts[X][Y].v = 2;
+                Gm.Counts[X][Y] = 2;
                 break;
               }
             }
@@ -268,14 +255,13 @@
         var is_moved = false; // 움직였는지 여부ㅓ
         for(var i = 0; i < 4; i++){
           for(var j = 0; j < 4; j++){
-            if(Gm.Counts[i][j].v != 0){ // 지금 선택된 칸이 0이 아니라면(값이 있다면)
+            if(Gm.Counts[i][j] != 0){ // 지금 선택된 칸이 0이 아니라면(값이 있다면)
               for(var k = j -1; k >=0; k--){ // 왼쪽으로 이동, 만약에 같은 값이 있다면 합치기
-                if(Gm.Counts[i][k].v != 0){ // 옆칸에 값이 있다면
-                  if(Gm.Counts[i][k].v == Gm.Counts[i][k+1].v && Gm.Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[i][k] != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[i][k] == Gm.Counts[i][k+1] && Gm.Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(i,k);
-                    Gm.Counts[i][j].MoveTox = i;
-                    Gm.Counts[i][j].MoveToy = k;
-                    Remove(i,k+1);
+                    Gm.Move[i][j][0] = i;
+                    Gm.Move[i][j][1] = k;
                     is_moved = true;
                     break;
                   }else{ // 옆칸의 값이 대상 값과 다르다면
@@ -297,12 +283,11 @@
         var is_moved = false; // 움직였는지 여부
         for(var i = 0; i < 4; i++){
           for(var j = 3; j >= 0; j--){
-            if(Gm.Counts[i][j].v != 0){
+            if(Gm.Counts[i][j] != 0){
               for(var k = j +1; k < 4; k++){
-                if(Gm.Counts[i][k].v != 0){ // 옆칸에 값이 있다면
-                  if(Gm.Counts[i][k].v == Gm.Counts[i][k-1].v && Gm.Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[i][k] != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[i][k] == Gm.Counts[i][k-1] && Gm.Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(i,k);
-                    Remove(i,k-1);
                     is_moved = true;
                     break;
                   }else{ // 옆칸의 값이 대상 값과 다르다면
@@ -324,12 +309,11 @@
         var is_moved = false; // 움직였는지 여부
         for(var j = 0; j < 4; j++){
           for(var i = 0; i < 4; i++){
-            if(Gm.Counts[i][j].v != 0){
+            if(Gm.Counts[i][j] != 0){
               for(var k = i -1; k >=0; k--){
-                if(Gm.Counts[k][j].v != 0){ // 옆칸에 값이 있다면
-                  if(Gm.Counts[k][j].v == Gm.Counts[k+1][j].v && Gm.Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[k][j] != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[k][j] == Gm.Counts[k+1][j] && Gm.Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(k,j);
-                    Remove(k+1,j);
                     is_moved = true;
                     break;
                   }else{ // 옆칸의 값이 대상 값과 다르다면
@@ -351,12 +335,11 @@
         var is_moved = false; // 움직였는지 여부
         for(var j = 0; j < 4; j++){
           for(var i = 3; i >= 0; i--){
-            if(Gm.Counts[i][j].v != 0){
+            if(Gm.Counts[i][j] != 0){
               for(var k = i +1; k < 4; k++){
-                if(Gm.Counts[k][j].v != 0){ // 옆칸에 값이 있다면
-                  if(Gm.Counts[k][j].v == Gm.Counts[k-1][j].v && Gm.Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[k][j] != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[k][j] == Gm.Counts[k-1][j] && Gm.Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(k,j);
-                    Remove(k-1,j);
                     is_moved = true;
                     break;
                   }else{ // 옆칸의 값이 대상 값과 다르다면
