@@ -112,39 +112,68 @@
           }
         }
       }).mount('#game')
-      //var Counts = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]] // 숫자 배열
-      var Counts = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,0,0]] // 숫자 배열
-      //var Counts = [[1024,1024,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]] // 숫자 배열
-      var Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]] // 이동여부 배열
-      var Blocks = document.getElementsByClassName("block")
-      var text = document.getElementById("text");
-      var Board = document.getElementById("ReadyBoard");
-      var StartBtn = document.getElementById("StartBtn");
-      var StartScene = document.getElementById("StartScene");
-      var EndScene = document.getElementById("EndScene");
-      var ClearText = document.getElementById("ClearText")
-      var Score;
-      var gameState;
-      function Reset(){
-        Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+      class Block {
+        constructor(x,y,i) {
+          this.v = 0;
+          this.x = x;
+          this.y = y;
+          this.MoveTox = x;
+          this.MoveToy = y;
+          this.index = i;
+          this.newValue = 0;
+        }
+        Move(x,y){
+          this.MoveTox = x;
+          this.MoveToy = y;
+        }
       }
+      class GameManager{
+        constructor() { //생성자
+          this.Blocks = document.getElementsByClassName("block")
+          this.text = document.getElementById("text");
+          this.Board = document.getElementById("ReadyBoard");
+          this.StartBtn = document.getElementById("StartBtn");
+          this.StartScene = document.getElementById("StartScene");
+          this.EndScene = document.getElementById("EndScene");
+          this.ClearText = document.getElementById("ClearText")
+          this.Score;
+          this.gameState;
+          this.Counts = new Array(4);
+          this.ReturnNum = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+          this.Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+          for (var i = 0; i < this.Counts.length; i++) {
+              this.Counts[i] = new Array();
+              }
+          for(var i = 0; i<4; i++){
+            for(var j = 0; j<4; j++){
+              this.Counts[i].push(new Block(i,j));
+            }
+          }
+        }
+      }
+      var Gm
+
+      function Reset(){
+        Gm.Check = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+      }
+
       function Mul2(a,b){
-        Counts[a][b] *= 2;
-        Check[a][b] = 1;
-        if(Counts[a][b] == 2048){
+        Gm.Counts[a][b].v *= 2;
+        Gm.Check[a][b] = 1;
+        if(Gm.Counts[a][b].v == 2048){
           Clear();
         }
       }
       function Remove(a,b){
-        Counts[a][b] = 0;
+        Gm.Counts[a][b].v = 0;
       }
       function Change(a,b,c,d){
         if(d == "L" || d == "R"){
-          Counts[a][b] = Counts[a][c];
-          Counts[a][c] = 0;
+          Gm.Counts[a][b].v = Gm.Counts[a][c].v;
+          Gm.Counts[a][c].v = 0;
         }else if(d == "U" || d == "D"){
-          Counts[a][b] = Counts[c][b];
-          Counts[c][b] = 0;
+          Gm.Counts[a][b].v = Gm.Counts[c][b].v;
+          Gm.Counts[c][b].v = 0;
         }
       }
       function Update(){
@@ -152,26 +181,35 @@
           for(var j = 0; j < 4; j++){
             var a = i * 4;
             var b = a + j;
-            if(Counts[i][j] != 0){
-              Blocks[b].innerHTML = Counts[i][j]; // 배열의 값을 블록에 넣음
-              Blocks[b].id = "count" + Counts[i][j];
+            if(Gm.Counts[i][j].v != 0){
+              Gm.Blocks[b].innerHTML = Gm.Counts[i][j].v; // 배열의 값을 블록에 넣음
+              Gm.Blocks[b].id = "count" + Gm.Counts[i][j].v;
             }else{
-              Blocks[b].innerHTML = ""; // 배열의 값을 블록에 넣음
-              Blocks[b].id = "no";
+              Gm.Blocks[b].innerHTML = ""; // 배열의 값을 블록에 넣음
+              Gm.Blocks[b].id = "no";
             }
           }
         }
         var is_End = 0;
         for(var i = 0; i < 4; i++){
           for(var j = 0; j < 4; j++){
-            if(Counts[i][j] != 0) is_End += 1;
+            var Can_Move = 4;
+            if(i == 0) Can_Move-=1; // 맨 왼쪽이면 이동불가
+            else if(Gm.Counts[i-1][j].v != 0 && Gm.Counts[i-1][j].v != Gm.Counts[i][j].v) Can_Move-=1 // 왼쪽이동가능여부 확인
+            if(i == 3) Can_Move-=1; // 맨 오른쪽이면 이동불가
+            else if(Gm.Counts[i+1][j].v != 0 && Gm.Counts[i+1][j].v != Gm.Counts[i][j].v) Can_Move-=1 // 오른쪽이동가능여부 확인
+            if(j == 0) Can_Move-=1; // 맨 위쪽이면 이동불가
+            else if(Gm.Counts[i][j-1].v != 0 && Gm.Counts[i][j-1].v != Gm.Counts[i][j].v) Can_Move-=1 // 위쪽이동가능여부 확인
+            if(j == 3) Can_Move-=1; // 맨 아래쪽이면 이동불가
+            else if(Gm.Counts[i][j+1].v != 0 && Gm.Counts[i][j+1].v != Gm.Counts[i][j].v) Can_Move-=1 // 아래쪽이동가능여부 확인
+            if(Can_Move == 0) is_End += 1;
+            }
           }
-        }
         if(is_End == 16){
           End();
         }
         Reset();
-        text.innerHTML = "MoveCount : " + Score;
+        Gm.innerHTML = "MoveCount : " + Gm.Score;
       }
       function StartMakeRandomN(){
         var A = parseInt(Math.random() * 100);
@@ -179,12 +217,12 @@
           while(true){
             var X = parseInt(Math.random() * 4);
             var Y = parseInt(Math.random() * 4);
-            if(Counts[X][Y] == 0){
+            if(Gm.Counts[X][Y].v == 0){
               if(A > 66){
-                Counts[X][Y] = 4;
+                Gm.Counts[X][Y].v = 4;
                 break;
               }else{
-                Counts[X][Y] = 2;
+                Gm.Counts[X][Y].v = 2;
                 break;
               }
             }
@@ -194,12 +232,12 @@
             while(true){
               var X = parseInt(Math.random() * 4);
               var Y = parseInt(Math.random() * 4);
-              if(Counts[X][Y] == 0){
+              if(Gm.Counts[X][Y].v == 0){
                 if(i == 0){
-                  Counts[X][Y] = 2;
+                  Gm.Counts[X][Y].v = 2;
                   break;
                 }else{
-                  Counts[X][Y] = 4;
+                  Gm.Counts[X][Y].v = 4;
                   break;
                 }
               }
@@ -208,33 +246,35 @@
         }
       }
       function MakeRandomN(){
-        if(gameState == "Play"){
+        if(Gm.gameState == "Play"){
           while(true){
             var X = parseInt(Math.random() * 4);
             var Y = parseInt(Math.random() * 4);
-            if(Counts[X][Y] == 0){
+            if(Gm.Counts[X][Y].v == 0){
               var Z = parseInt(Math.random() * 10);
               if(Z > 7){
-                Counts[X][Y] = 4;
+                Gm.Counts[X][Y].v = 4;
                 break;
               }else{
-                Counts[X][Y] = 2;
+                Gm.Counts[X][Y].v = 2;
                 break;
               }
             }
           }
-          Score+=1;
+          Gm.Score+=1;
         }
       }
       function MoveLeft(){
         var is_moved = false; // 움직였는지 여부ㅓ
         for(var i = 0; i < 4; i++){
           for(var j = 0; j < 4; j++){
-            if(Counts[i][j] != 0){ // 지금 선택된 칸이 0이 아니라면(값이 있다면)
+            if(Gm.Counts[i][j].v != 0){ // 지금 선택된 칸이 0이 아니라면(값이 있다면)
               for(var k = j -1; k >=0; k--){ // 왼쪽으로 이동, 만약에 같은 값이 있다면 합치기
-                if(Counts[i][k] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[i][k] == Counts[i][k+1] && Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[i][k].v != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[i][k].v == Gm.Counts[i][k+1].v && Gm.Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(i,k);
+                    Gm.Counts[i][j].MoveTox = i;
+                    Gm.Counts[i][j].MoveToy = k;
                     Remove(i,k+1);
                     is_moved = true;
                     break;
@@ -257,10 +297,10 @@
         var is_moved = false; // 움직였는지 여부
         for(var i = 0; i < 4; i++){
           for(var j = 3; j >= 0; j--){
-            if(Counts[i][j] != 0){
+            if(Gm.Counts[i][j].v != 0){
               for(var k = j +1; k < 4; k++){
-                if(Counts[i][k] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[i][k] == Counts[i][k-1] && Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[i][k].v != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[i][k].v == Gm.Counts[i][k-1].v && Gm.Check[i][k] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(i,k);
                     Remove(i,k-1);
                     is_moved = true;
@@ -284,10 +324,10 @@
         var is_moved = false; // 움직였는지 여부
         for(var j = 0; j < 4; j++){
           for(var i = 0; i < 4; i++){
-            if(Counts[i][j] != 0){
+            if(Gm.Counts[i][j].v != 0){
               for(var k = i -1; k >=0; k--){
-                if(Counts[k][j] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[k][j] == Counts[k+1][j] && Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[k][j].v != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[k][j].v == Gm.Counts[k+1][j].v && Gm.Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(k,j);
                     Remove(k+1,j);
                     is_moved = true;
@@ -311,10 +351,10 @@
         var is_moved = false; // 움직였는지 여부
         for(var j = 0; j < 4; j++){
           for(var i = 3; i >= 0; i--){
-            if(Counts[i][j] != 0){
+            if(Gm.Counts[i][j].v != 0){
               for(var k = i +1; k < 4; k++){
-                if(Counts[k][j] != 0){ // 옆칸에 값이 있다면
-                  if(Counts[k][j] == Counts[k-1][j] && Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
+                if(Gm.Counts[k][j].v != 0){ // 옆칸에 값이 있다면
+                  if(Gm.Counts[k][j].v == Gm.Counts[k-1][j].v && Gm.Check[k][j] == 0){ // 옆칸의 값이 대상 값과 같다면
                     Mul2(k,j);
                     Remove(k-1,j);
                     is_moved = true;
@@ -334,36 +374,30 @@
         }
         if(is_moved) MakeRandomN();
       }
-      document.addEventListener("keydown", DK, false);
-      window.onload = function(){
-        Score = 0;
-        StartMakeRandomN();
-        Update();
-      }
       function Start(){
-        Score = 0;
-        gameState = "Play"
+        Gm.Score = 0;
+        Gm.gameState = "Play"
         StartMakeRandomN();
         Update();
-        Board.setAttribute('id','StartBoard')
-        StartScene.style.display = 'none'
+        Gm.Board.id = 'StartBoard'
+        Gm.StartScene.style.display = 'none'
       }
       function Ready(){
-        gameState = "Ready"
+        Gm.gameState = "Ready"
       }
       function End(){
-        gameState = "End"
-        Board.setAttribute('id','ReadyBoard')
-        EndScene.style.display = 'block'
+        Gm.gameState = "End"
+        Gm.Board.setAttribute('id','ReadyBoard')
+        Gm.EndScene.style.display = 'block'
       }
       function Clear(){
-        gameState = "Clear"
-        Board.setAttribute('id','ReadyBoard')
-        ClearScene.style.display = 'block'
-        ClearText.innerHTML = "당신에 점수는 ...! " + Score + "점...! 대다내...!!!"
+        Gm.gameState = "Clear"
+        Gm.Board.setAttribute('id','ReadyBoard')
+        Gm.ClearScene.style.display = 'block'
+        Gm.ClearText.innerHTML = "당신에 점수는 ...! " + Gm.Score + "점...! 대다내...!!!"
       }
       function DK(event){
-        if(gameState == "Play"){
+        if(Gm.gameState == "Play"){
             switch(event.keyCode) {
           		case 37:
                 MoveLeft();
@@ -390,8 +424,14 @@
             }
           }
         }
-      StartBtn.addEventListener('click',Start)
-      window.onload = Ready();
+
+      window.onload = function(){
+        Gm = new GameManager();
+        Gm.Score = 0;
+        document.addEventListener("keydown", DK, false);
+        Gm.StartBtn.addEventListener('click',Start)
+        Ready(Gm);
+      }
      </script>
   </body>
 </html>
